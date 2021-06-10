@@ -1,0 +1,4 @@
+Command: Image: /Library/Management/Images/company_logo.png
+Command: MainTitle: Welcome to your new Mac!
+Command: MainText: Your Mac will begin the setup process shortly
+Status: Waiting for Jamf installation...

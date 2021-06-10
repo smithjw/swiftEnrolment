@@ -1,0 +1,31 @@
+#!/bin/bash
+## postinstall
+
+# Sourced from https://gist.github.com/arekdreyer/a7af6eab0646a77b9684b2e620b59e1b
+
+TempUtilitiesPath=/var/tmp
+
+# You can change any of these:
+installer_base_string=com.github.smithjw.DEPNotify-prestarter
+installer_script_name=${installer_base_string}-installer.zsh
+installer_script_path=${TempUtilitiesPath}/${installer_script_name}
+uninstaller_script_name=${installer_base_string}-uninstaller.zsh
+uninstaller_script_path=${TempUtilitiesPath}/${uninstaller_script_name}
+
+# Best to use /Library/LaunchDaemons for the LaunchDaemon
+launchdaemon_name=${installer_base_string}.plist
+launchdaemon_path="/Library/LaunchDaemons"/${launchdaemon_name}
+
+echo "Setting permissions for installer scripts."
+chmod 755 "${installer_script_path}" "${uninstaller_script_path}"
+chown root:wheel "${installer_script_path}" "${uninstaller_script_path}"
+
+echo "Setting permissions for ${launchdaemon_path}."
+chmod 644 "${launchdaemon_path}"
+chown root:wheel "${launchdaemon_path}"
+
+echo "Loading ${launchdaemon_name}."
+launchctl load "${launchdaemon_path}"
+
+exit 0		## Success
+exit 1		## Failure

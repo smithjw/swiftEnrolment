@@ -1,0 +1,17 @@
+#!/bin/zsh
+# shellcheck shell=bash
+# This is only needed if building the packages separately
+
+chmod +x scripts/*
+
+cert="Developer ID Installer: COMPANY_NAME_HERE"
+identifier='com.github.smithjw.speedy-prestage.apps'
+
+if [ -z "$1" ]; then
+    echo "Please include the package version number when running this script"
+    echo "eg ./build 1.0"
+else
+    pkgbuild --sign "$cert" --root pkgroot --scripts scripts --identifier "$identifier" --version "$1" ../Built/PreStage_Apps-"$1".pkg
+fi
+
+exit 0

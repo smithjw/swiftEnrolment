@@ -1,0 +1,32 @@
+#!/bin/bash
+## preinstall
+
+# Create directory for mangement plist
+mkdir -p /Library/Management
+
+# Write enrolment start time to plist
+defaults write /Library/Management/management_info.plist enrol_start_prestage "$(date +%s)"
+
+arch=$(/usr/bin/arch)
+if [ "$arch" == "arm64" ]; then
+    echo "This is an arm64 Mac."
+    # Install Rosetta 2 as this is a brand new Mac
+    /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+
+    # Check and make sure that Rosetta was installed
+    if [[ -f "/Library/Apple/System/Library/LaunchDaemons/com.apple.oahd.plist" ]]; then
+        echo "Rosetta 2 is already installed"
+    else
+        echo "Rosetta 2 didn't install - trying again"
+        /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+        if [[ -f "/Library/Apple/System/Library/LaunchDaemons/com.apple.oahd.plist" ]]; then
+            echo "Rosetta 2 is now installed"
+        else
+            echo "Rosetta 2 not detected"
+        fi
+    fi
+else
+    echo "This is an Intel Mac."
+fi
+
+exit 0
