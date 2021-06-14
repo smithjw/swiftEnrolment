@@ -22,24 +22,32 @@ package_identifier="com.gihub.smithjw.speedy-prestage"
 certificate_name="Developer ID Installer: COMPANY_NAME_HERE"
 provider="PROVIDER_NUMBER"
 dev_email="DEV_ACCOUNT_EMAIL"
+dev_password_name="distbuild-$dev_email"
 keychain_account="KEYCHAIN_ACCOUNT_USERNAME"
 
 # Build component packages 
 pkgbuild --sign "$certificate_name" --root "$apps_name_prefix"/pkgroot --scripts "$apps_name_prefix"/scripts \
-    --identifier com.github.smithjw.prestage_apps --version "$2" Built/"$apps_name_prefix"-"$2".pkg
+    --identifier com.github.smithjw.prestage_apps --version "$2" "$apps_name_prefix"-"$2".pkg
 pkgbuild --sign "$certificate_name" --root "$assets_name_prefix"/pkgroot --identifier comp.github.smithjw.prestage_assets \
-    --version "$2" Built/"$assets_name_prefix"-"$2".pkg
+    --version "$2" "$assets_name_prefix"-"$2".pkg
 
 # Build distribution package and sign
-productbuild --sign "$certificate_name" --package Built/"$assets_name_prefix"-"$2".pkg \
-    --package Built/"$apps_name_prefix"-"$2".pkg Built/"$package_name"
+productbuild --sign "$certificate_name" --package "$assets_name_prefix"-"$2".pkg \
+    --package "$apps_name_prefix"-"$2".pkg "$package_name"
+
+# Remove temp packages
+rm "$assets_name_prefix"-"$2".pkg
+rm "$apps_name_prefix"-"$2".pkg
 
 if [ -n "$3" ]; then
     echo 'Skipping Notarization'
     exit 0
 fi
 
-if ! dev_password=$(security find-generic-password -w -s "$dev_email" -a "$keychain_account"); then
+# Grab password from the keychain from Scripting OSX
+# https://scriptingosx.com/2021/04/get-password-from-keychain-in-shell-scripts/
+
+if ! dev_password=$(security find-generic-password -w -s "$dev_password_name" -a "$keychain_account"); then
     echo "could not get password, error $?"
     exit 1
 fi
