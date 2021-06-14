@@ -17,3 +17,7 @@ Update the following variables:
 - `provider`
 - `dev_email`
 - `keychain_account`
+
+You will also need to store the password for your developer account in the keychain using the following method:
+
+`security add-generic-password -s 'distbuild-DEV_ACCOUNT@EMAIL.COM' -a 'YOUR_USERNAME' -w 'DEV_ACCOUNT_PASSWORD'`
