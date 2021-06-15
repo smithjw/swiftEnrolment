@@ -54,7 +54,7 @@ fi
 
 # Send the package for notarization
 xcrun altool --notarize-app --primary-bundle-id "$package_identifier" --username "$dev_email" \
-    --password "$dev_password" --asc-provider "$provider" --file Built/"$package_name" &> notarize_pkg
+    --password "$dev_password" --asc-provider "$provider" --file "$package_name" &> notarize_pkg
 
 notarization_uuid=$(< notarize_pkg grep -Eo '\w{8}-(\w{4}-){3}\w{12}$')
 
@@ -69,7 +69,7 @@ while true; do
     
     if [[ "$notarization_progress" != "" ]]; then
         echo "Notarization Complete!"
-        xcrun stapler staple Built/"$package_name"
+        xcrun stapler staple "$package_name"
         echo "Stapling Complete!"
 
         # Removing temp files

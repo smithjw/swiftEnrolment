@@ -1,5 +1,6 @@
 #!/bin/zsh
 # shellcheck shell=bash
+# Initially sourced from https://gist.github.com/arekdreyer/a7af6eab0646a77b9684b2e620b59e1b
 
 # Some Variables
 depnotify_app="/Applications/Utilities/DEPNotify.app"

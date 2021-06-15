@@ -1,5 +1,6 @@
 #!/bin/zsh
 # shellcheck shell=bash
+# Initially sourced from https://gist.github.com/arekdreyer/a7af6eab0646a77b9684b2e620b59e1b
 
 # This is meant to be called by a Jamf Pro policy via trigger
 # Near the end of your POLICY_ARRAY in your DEPNotify.sh script

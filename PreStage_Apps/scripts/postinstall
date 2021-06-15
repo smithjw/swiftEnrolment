@@ -1,7 +1,6 @@
 #!/bin/bash
 ## postinstall
-
-# Sourced from https://gist.github.com/arekdreyer/a7af6eab0646a77b9684b2e620b59e1b
+# Initially sourced from https://gist.github.com/arekdreyer/a7af6eab0646a77b9684b2e620b59e1b
 
 TempUtilitiesPath=/var/tmp
 
