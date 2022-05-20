@@ -12,7 +12,6 @@ log_name="enrolment.log"
 dialog_pkg="${working_dir}/dialog.pkg"
 installer_base_string="com.github.smithjw.mac.prestarter"
 installer_script="${working_dir}/${installer_base_string}-installer.sh"
-uninstaller_script="${working_dir}/${installer_base_string}-uninstaller.sh"
 launchdaemon="/Library/LaunchDaemons/${installer_base_string}.plist"
 post_enrolment_script="/usr/local/outset/login-privileged-once/001_post_enrolment.sh"
 
@@ -33,8 +32,8 @@ installer -pkg "${dialog_pkg}" -target /
 # rm "${dialog_pkg[*]}"
 
 echo_logger "Setting permissions for installer scripts"
-chmod 755 "${installer_script}" "${uninstaller_script}" "${post_enrolment_script}"
-chown root:wheel "${installer_script}" "${uninstaller_script}" "${post_enrolment_script}"
+chmod 755 "${installer_script}" "${post_enrolment_script}"
+chown root:wheel "${installer_script}" "${post_enrolment_script}"
 
 echo_logger "Setting permissions for ${launchdaemon}."
 chmod 644 "${launchdaemon}"
