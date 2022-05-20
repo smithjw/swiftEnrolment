@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# TODO:
+# - [] Check for existing package
+# - [] Compare versions downloaded
+dialog_latest=$( curl -sL https://api.github.com/repos/bartreardon/swiftDialog/releases/latest )
+logged_in_user=$( scutil <<< "show State:/Users/ConsoleUser" | awk '/Name :/ && ! /loginwindow/ { print $3 }' )
+mp="/usr/local/bin/munkipkg"
+
+pkg_result="0"
+pkg_version="0.0"
+pkg_dir=$PWD
+pkg_name="PreStage"
+pkg_output_dir="/Users/${logged_in_user}"
+pkg_identifier="prestage.apps.user"
+
+while getopts ":i:n:v:d" o; do
+    case "${o}" in
+        i)
+            pkg_identifier="${OPTARG}"
+            ;;
+        n)
+            pkg_name="${OPTARG}"
+            ;;
+        v)
+            pkg_version="${OPTARG}"
+            ;;
+        d)
+            debug="true"
+            ;;
+        *)
+            ;;
+    esac
+done
+
+get_json_value() {
+    JSON="$1" osascript -l 'JavaScript' \
+        -e 'const env = $.NSProcessInfo.processInfo.environment.objectForKey("JSON").js' \
+        -e "JSON.parse(env).$2"
+}
+
+# dialog_version=$(get_json_value "$dialog_latest" 'tag_name' | sed -e s/v//)
+# dialog_pkg=$(get_json_value "$dialog_latest" 'assets[0].name')
+dialog_url=$(get_json_value "$dialog_latest" 'assets[0].browser_download_url')
+
+# Download the latest version of swiftDialog
+# https://dev.to/saintdle/download-releases-from-github-using-curl-and-wget-54fi
+# https://daniel.haxx.se/blog/2020/09/10/store-the-curl-output-over-there/
+# -L to follow redirects
+# -OJ to either use the filename in the URL or let the server set the name
+curl -L --output "dialog.pkg" --create-dirs --output-dir "payload/var/tmp" "$dialog_url"
+
+
+# Create the json file for signed munkipkg pkg
+/bin/cat << EOF > "$pkg_dir/build-info.json"
+{
+    "ownership": "recommended",
+    "suppress_bundle_relocation": true,
+    "identifier": "com.github.smithjw.mac.$pkg_identifier",
+    "postinstall_action": "none",
+    "distribution_style": true,
+    "version": "${pkg_version}",
+    "name": "$pkg_name-$pkg_version.pkg",
+    "install_location": "/",
+    "signing_info": {
+        "identity": "CERT_GOES_HERE",
+        "timestamp": true
+    },
+    "notarization_info": {
+        "username": "DEVELOPER@ORG.COM",
+        "password": "@keychain:AC_PASSWORD",
+        "asc_provider": "ASC_PROFIDER",
+        "stapler_timeout": 600
+    }
+}
+EOF
+
+# Create the package if -d flag not set
+if [[ "$debug" != "true" ]]; then
+    $mp "$pkg_dir"
+    pkg_result="$?"
+fi
+
+if [ "${pkg_result}" != "0" ]; then
+    echo "Could not sign package: ${pkg_result}" 1>&2
+else
+    /bin/mv "$pkg_dir/build/$pkg_name-$pkg_version.pkg" "$pkg_output_dir"
+    /bin/rm -r "$pkg_dir/build"
+    /bin/rm "$pkg_dir/build-info.json"
+    /bin/rm "payload/var/tmp/dialog.pkg"
+fi
+
+exit 0
