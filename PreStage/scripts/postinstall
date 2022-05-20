@@ -1,0 +1,47 @@
+#!/bin/bash
+## postinstall
+
+# Original source https://gist.github.com/arekdreyer/a7af6eab0646a77b9684b2e620b59e1b
+# Author: James Smith - james@anz.com / james@smithjw.me
+# Version: 2.0
+
+# Variables to kick things off
+working_dir="/var/tmp"
+log_folder="/private/var/log"
+log_name="enrolment.log"
+dialog_pkg="${working_dir}/dialog.pkg"
+installer_base_string="com.github.smithjw.mac.prestarter"
+installer_script="${working_dir}/${installer_base_string}-installer.sh"
+uninstaller_script="${working_dir}/${installer_base_string}-uninstaller.sh"
+launchdaemon="/Library/LaunchDaemons/${installer_base_string}.plist"
+post_enrolment_script="/usr/local/outset/login-privileged-once/001_post_enrolment.sh"
+
+echo_logger() {
+    log_folder="${log_folder:=/private/var/log}"
+    log_name="${log_name:=log.log}"
+
+    mkdir -p $log_folder
+
+    echo -e "$(date) - $1" | tee -a $log_folder/$log_name
+}
+
+echo_logger "Installing swiftDialog"
+# ${array[-1]} grabs the last index in the array
+# ${array[*]} grabs all indexs in the array
+
+installer -pkg "${dialog_pkg}" -target /
+# rm "${dialog_pkg[*]}"
+
+echo_logger "Setting permissions for installer scripts"
+chmod 755 "${installer_script}" "${uninstaller_script}" "${post_enrolment_script}"
+chown root:wheel "${installer_script}" "${uninstaller_script}" "${post_enrolment_script}"
+
+echo_logger "Setting permissions for ${launchdaemon}."
+chmod 644 "${launchdaemon}"
+chown root:wheel "${launchdaemon}"
+
+echo_logger "Loading ${launchdaemon}."
+launchctl load "${launchdaemon}"
+
+exit 0		## Success
+exit 1		## Failure

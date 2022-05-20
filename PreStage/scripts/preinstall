@@ -1,0 +1,59 @@
+#!/bin/bash
+## preinstall
+
+log_folder="/private/var/log"
+log_name="enrolment.log"
+installer_base_string="com.github.smithjw.mac.prestarter"
+launchdaemon="/Library/LaunchDaemons/${installer_base_string}.plist"
+
+echo_logger() {
+    log_folder="${log_folder:=/private/var/log}"
+    log_name="${log_name:=log.log}"
+
+    mkdir -p $log_folder
+
+    echo -e "$(date) - $1" | tee -a $log_folder/$log_name
+}
+
+echo_logger "PREINSTALL: Create directory for mangement plist"
+mkdir -p /Library/Management
+
+echo_logger "PREINSTALL: Write enrolment start time to plist"
+defaults write /Library/Management/management_info.plist enrol_prestage_start "$(date +%s)"
+
+echo_logger "PREINSTALL: Checking for existing LaunchDaemon"
+if [ -f "$launchdaemon" ]; then
+    launchctl unload "$launchdaemon"
+fi
+
+if [[ $( /usr/bin/arch ) = arm64* ]]; then
+    echo_logger "PREINSTALL: This is an Apple Silicon Mac, checking for Rosetta"
+    test=$( pgrep oahd 2>&1 >/dev/null ; echo $? )
+    if [[ "$test" = "0" ]]; then
+        echo_logger "PREINSTALL: Rosetta is already installed"
+    else
+        /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+
+        test=$( pgrep oahd 2>&1 >/dev/null ; echo $? )
+
+        if [[ "$test" = "0" ]]; then
+            echo_logger "PREINSTALL: Rosetta 2 was installed"
+        else
+            echo_logger "PREINSTALL: Rosetta 2 wasn't installed - trying again"
+            /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+
+            test=$( pgrep oahd 2>&1 >/dev/null ; echo $? )
+
+            if [[ "$test" = "0" ]]; then
+                echo_logger "PREINSTALL: Rosetta 2 is now installed"
+            else
+                echo_logger "PREINSTALL: Rosetta 2 wasn't installed"
+            fi
+        fi
+    fi
+else
+    echo_logger "PREINSTALL: This is an Intel Mac, moving on"
+fi
+
+exit 0
+
