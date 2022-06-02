@@ -1,15 +1,14 @@
-# Work In Progress
+# swiftEnrolment
 
-
-## PreStage Apps
+## Jamf Enrolment Script
 
 You will need a policy setup in Jamf that uses a custom trigger called `configure-Mac`. If you wish to change this, you can edit the `enrolment_starter_trigger` variable in the `com.github.smithjw.mac.swiftEnrolment.sh` file.
 
-## PreStage Assets
+## PreStage Package
 
 - Drop any assets/logos into the `PreStage/payload/Library/Management/Images` folder
 
-## build-pkg
+### build-pkg
 
 Run this script to pull down the latest version of `swiftDialog` and create a PreStage Enrolment package
 
