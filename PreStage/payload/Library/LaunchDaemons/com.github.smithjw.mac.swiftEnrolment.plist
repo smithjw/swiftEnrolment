@@ -3,7 +3,7 @@
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>com.github.smithjw.mac.prestarter</string>
+    <string>com.github.smithjw.mac.swiftEnrolment</string>
     <key>RunAtLoad</key>
     <true />
     <key>UserName</key>
@@ -11,11 +11,11 @@
     <key>ProgramArguments</key>
     <array>
       <string>/bin/bash</string>
-      <string>/var/tmp/com.github.smithjw.mac.prestarter-installer.sh</string>
+      <string>/var/tmp/com.github.smithjw.mac.swiftEnrolment.sh</string>
     </array>
     <key>StandardErrorPath</key>
-    <string>/var/log/com.github.smithjw.mac.prestarter.log</string>
+    <string>/var/log/com.github.smithjw.mac.swiftEnrolment.log</string>
     <key>StandardOutPath</key>
-    <string>/var/log/com.github.smithjw.mac.prestarter.log</string>
+    <string>/var/log/com.github.smithjw.mac.swiftEnrolment.log</string>
   </dict>
 </plist>

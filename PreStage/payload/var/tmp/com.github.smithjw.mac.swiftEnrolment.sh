@@ -8,7 +8,7 @@
 counter_start=0
 enrolment_starter_trigger="configure-Mac"
 log_folder="/private/var/log"
-log_name="enrolment.log"
+log_name="swiftEnrolment.log"
 jamf_binary="/usr/local/bin/jamf"
 
 dialog_app="/usr/local/bin/dialog"
