@@ -1,18 +1,18 @@
 #!/bin/bash
 # Enrolment script used at ANZ
-# Author: James Smith - james@smithjw.me
+# Author: James Smith - james@smithjw.me / james@anz.com
 # Version 3.0
 
 defaults write /Library/Management/management_info.plist enrol_initial_policy_start "$(date +%s)"
 
-# Projects that this script steals from:
-#   - https://github.com/jamfprofessionalservices/DEP-Notify
-#   -
+jamf_binary="/usr/local/bin/jamf"
+fde_setup_binary="/usr/bin/fdesetup"
+log_folder="/private/var/log"
+log_name="enrolment.log"
 
 dialog_app="/usr/local/bin/dialog"
 dialog_command_file="/var/tmp/dialog.log"
 dialog_icon="/Library/Management/Images/company_logo.png"
-
 dialog_title="We're getting a few things ready on your new Mac"
 dialog_title_complete="You're all done"
 dialog_message="Thanks for choosing a Mac! \n\n We want you to have a few applications and settings configured before you get started. \n\n This process should take about 5 to 10 minutes to complete."
@@ -32,17 +32,9 @@ dialog_cmd=(
     "--blurscreen"
 )
 
-jamf_binary="/usr/local/bin/jamf"
-fde_setup_binary="/usr/bin/fdesetup"
-
-log_folder="/private/var/log"
-log_name="enrolment.log"
-
 #########################################################################################
 # Policy Array to determine what's installed
 #########################################################################################
-
-# colour1=#007DBA colour2=#0064A1
 
 policy_array=('
 {
@@ -236,9 +228,6 @@ logged_in_user=$( scutil <<< "show State:/Users/ConsoleUser" | awk '/Name :/ && 
 logged_in_user_uid=$(id -u "$logged_in_user")
 echo_logger "Current user set to $logged_in_user."
 
-# echo_logger "INFO: Caffeinating swiftDialog process. Process ID: $dialog_process"
-# caffeinate -disu -w "$dialog_process"&
-
 # Rename the Mac to match SN if that wasn't completed prior
 if [ "$testing_mode" != true ]; then
     serial_number=$(ioreg -c IOPlatformExpertDevice -d 2 | awk -F\" '/IOPlatformSerialNumber/{print $(NF-1)}')
@@ -319,9 +308,8 @@ chmod 755 "/usr/local/outset/login-privileged-once/$post_enrolment_script"
 
 # Remove files from the prestage package
 prestarter_files=(
-    "/Library/LaunchDaemons/com.github.smithjw.prestarter.plist"
-    "/var/tmp/com.github.smithjw.prestarter-installer.sh"
-    "/var/tmp/com.github.smithjw.prestarter-installer.sh"
+    "/Library/LaunchDaemons/com.github.smithjw.mac.swiftEnrolment.plist"
+    "/var/tmp/com.github.smithjw.mac.swiftEnrolment.sh"
 )
 
 for file in "${prestarter_files[@]}"; do
