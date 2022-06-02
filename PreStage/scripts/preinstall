@@ -1,9 +1,11 @@
 #!/bin/bash
 ## preinstall
+# Author: James Smith - james@anz.com / james@smithjw.me
+# Version: 2.0
 
 log_folder="/private/var/log"
 log_name="enrolment.log"
-installer_base_string="com.github.smithjw.mac.prestarter"
+installer_base_string="com.github.smithjw.mac.swiftEnrolment"
 launchdaemon="/Library/LaunchDaemons/${installer_base_string}.plist"
 
 echo_logger() {

@@ -1,7 +1,5 @@
 #!/bin/bash
 ## postinstall
-
-# Original source https://gist.github.com/arekdreyer/a7af6eab0646a77b9684b2e620b59e1b
 # Author: James Smith - james@anz.com / james@smithjw.me
 # Version: 2.0
 
@@ -10,8 +8,8 @@ working_dir="/var/tmp"
 log_folder="/private/var/log"
 log_name="enrolment.log"
 dialog_pkg="${working_dir}/dialog.pkg"
-installer_base_string="com.github.smithjw.mac.prestarter"
-installer_script="${working_dir}/${installer_base_string}-installer.sh"
+installer_base_string="com.github.smithjw.mac.swiftEnrolment.sh"
+installer_script="${working_dir}/${installer_base_string}.sh"
 launchdaemon="/Library/LaunchDaemons/${installer_base_string}.plist"
 post_enrolment_script="/usr/local/outset/login-privileged-once/001_post_enrolment.sh"
 
